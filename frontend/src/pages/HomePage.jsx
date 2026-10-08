@@ -67,34 +67,45 @@ function HomePage() {
             </p>
 
             {/* FEATURE PILLS */}
-            <div className="flex flex-wrap gap-3">
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Live Video Chat
+            {/* FEATURE PILLS */}
+            <div className="flex flex-wrap gap-2.5">
+              <div className="badge badge-lg badge-primary gap-1.5 font-bold">
+                <span>👔 Interviewer Workspace</span>
               </div>
-              <div className="badge badge-lg badge-outline">
-                <CheckIcon className="size-4 text-success" />
-                Code Editor
+              <div className="badge badge-lg badge-secondary gap-1.5 font-bold">
+                <span>🎓 Candidate Room</span>
               </div>
-              <div className="badge badge-lg badge-outline">
+              <div className="badge badge-lg badge-outline gap-1.5">
                 <CheckIcon className="size-4 text-success" />
-                Multi-Language
+                Live HD Video & Chat
+              </div>
+              <div className="badge badge-lg badge-outline gap-1.5">
+                <CheckIcon className="size-4 text-success" />
+                Multi-Language Monaco Editor
               </div>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 pt-2">
               <SignInButton mode="modal">
-                <button className="btn btn-primary btn-lg">
-                  Start Coding Now
+                <button
+                  onClick={() => localStorage.setItem("talent_iq_role", "interviewer")}
+                  className="btn btn-primary btn-lg shadow-lg hover:shadow-xl gap-2"
+                >
+                  <span>Host as Interviewer 👔</span>
                   <ArrowRightIcon className="size-5" />
                 </button>
               </SignInButton>
 
-              <button className="btn btn-outline btn-lg">
-                <VideoIcon className="size-5" />
-                Watch Demo
-              </button>
+              <SignInButton mode="modal">
+                <button
+                  onClick={() => localStorage.setItem("talent_iq_role", "candidate")}
+                  className="btn btn-secondary btn-lg shadow-lg hover:shadow-xl gap-2"
+                >
+                  <span>Join as Candidate 🎓</span>
+                  <ArrowRightIcon className="size-5" />
+                </button>
+              </SignInButton>
             </div>
 
             {/* STATS */}

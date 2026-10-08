@@ -32,6 +32,20 @@ export const PROBLEMS = {
       "-10⁹ ≤ target ≤ 10⁹",
       "Only one valid answer exists",
     ],
+    hints: [
+      "Can you use a Hash Map to check if the complement (target - num) has already been seen?",
+      "Iterate through nums once: for each number, check if target - num is in your map. If so, return [map[target - num], i]. Otherwise store current num and index.",
+    ],
+    interviewerGuide: {
+      optimalApproach: "One-pass Hash Map storing (value -> index).",
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(n)",
+      rubric: [
+        "Identifies brute force O(n²) and moves to O(n)",
+        "Correct use of Hash Map lookup in constant time",
+        "Handles duplicate values and negative numbers",
+      ],
+    },
     starterCode: {
       javascript: `function twoSum(nums, target) {
   // Write your solution here
@@ -93,6 +107,20 @@ class Solution {
       },
     ],
     constraints: ["1 ≤ s.length ≤ 10⁵", "s[i] is a printable ascii character"],
+    hints: [
+      "Think about using two pointers: one at the start of the array and one at the end.",
+      "Swap characters at the left and right pointers, then increment left and decrement right until left >= right.",
+    ],
+    interviewerGuide: {
+      optimalApproach: "Two-pointer in-place swap without allocating extra array.",
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(1) auxiliary",
+      rubric: [
+        "In-place modification without extra memory allocation",
+        "Proper loop termination condition (left < right)",
+        "Handles both odd and even length strings",
+      ],
+    },
     starterCode: {
       javascript: `function reverseString(s) {
   // Write your solution here
@@ -173,6 +201,20 @@ class Solution {
       },
     ],
     constraints: ["1 ≤ s.length ≤ 2 * 10⁵", "s consists only of printable ASCII characters"],
+    hints: [
+      "Filter out non-alphanumeric characters and normalize letters to lowercase.",
+      "Use two pointers (one at each end) moving inward to compare characters.",
+    ],
+    interviewerGuide: {
+      optimalApproach: "Two pointers scanning inward while skipping non-alphanumeric characters.",
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(1)",
+      rubric: [
+        "Correct alphanumeric check and case normalization",
+        "Avoids excessive auxiliary string allocations",
+        "Handles empty and whitespace-only strings",
+      ],
+    },
     starterCode: {
       javascript: `function isPalindrome(s) {
   // Write your solution here
@@ -239,6 +281,20 @@ print(isPalindrome(" "))  # Expected: True`,
       },
     ],
     constraints: ["1 ≤ nums.length ≤ 10⁵", "-10⁴ ≤ nums[i] ≤ 10⁴"],
+    hints: [
+      "Consider Kadane's algorithm: at each index, decide whether to extend the previous subarray or start a new one.",
+      "Keep track of currentMax = Math.max(num, currentMax + num) and globalMax = Math.max(globalMax, currentMax).",
+    ],
+    interviewerGuide: {
+      optimalApproach: "Kadane's Algorithm running in O(n) time and O(1) space.",
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(1)",
+      rubric: [
+        "Identifies dynamic programming / Kadane's formulation",
+        "Correctly handles arrays with all negative numbers",
+        "Avoids nested loop O(n²) or O(n³)",
+      ],
+    },
     starterCode: {
       javascript: `function maxSubArray(nums) {
   // Write your solution here
@@ -304,6 +360,20 @@ print(maxSubArray([5,4,-1,7,8]))  # Expected: 23`,
       },
     ],
     constraints: ["n == height.length", "2 ≤ n ≤ 10⁵", "0 ≤ height[i] ≤ 10⁴"],
+    hints: [
+      "Area is calculated as: min(height[left], height[right]) * (right - left).",
+      "Start with the widest container (left = 0, right = length - 1) and always advance the pointer corresponding to the shorter bar.",
+    ],
+    interviewerGuide: {
+      optimalApproach: "Two-pointer greedy strategy moving the shorter line inward.",
+      timeComplexity: "O(n)",
+      spaceComplexity: "O(1)",
+      rubric: [
+        "Explains why moving the shorter wall cannot miss the optimal solution",
+        "Calculates area correctly with width and min height",
+        "Achieves optimal O(n) one-pass solution",
+      ],
+    },
     starterCode: {
       javascript: `function maxArea(height) {
   // Write your solution here

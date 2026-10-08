@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router";
-import { BookOpenIcon, LayoutDashboardIcon, SparklesIcon } from "lucide-react";
+import { BookOpenIcon, LayoutDashboardIcon, SparklesIcon, BriefcaseIcon, CodeIcon, ChevronDownIcon } from "lucide-react";
 import { UserButton } from "@clerk/clerk-react";
+import { useRole } from "../context/roleStore";
 
 function Navbar() {
   const location = useLocation();
-
-  console.log(location);
+  const { role, selectRole, setShowRoleModal } = useRole();
 
   const isActive = (path) => location.pathname === path;
 
@@ -29,44 +29,108 @@ function Navbar() {
           </div>
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          {/* ROLE SWITCHER DROPDOWN */}
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className={`btn btn-sm gap-2 border shadow-sm ${
+                role === "interviewer"
+                  ? "bg-primary/10 border-primary text-primary hover:bg-primary/20"
+                  : "bg-secondary/10 border-secondary text-secondary hover:bg-secondary/20"
+              }`}
+              title="Click to switch between Interviewer and Candidate views"
+            >
+              {role === "interviewer" ? (
+                <>
+                  <BriefcaseIcon className="size-4" />
+                  <span className="font-bold hidden sm:inline">Interviewer</span>
+                </>
+              ) : (
+                <>
+                  <CodeIcon className="size-4" />
+                  <span className="font-bold hidden sm:inline">Candidate</span>
+                </>
+              )}
+              <ChevronDownIcon className="size-3.5 opacity-70" />
+            </div>
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-50 menu p-2 shadow-2xl bg-base-100 rounded-2xl w-56 border border-base-300 mt-2"
+            >
+              <li className="menu-title text-xs">Switch Workspace Mode</li>
+              <li>
+                <button
+                  onClick={() => selectRole("interviewer")}
+                  className={`flex items-center justify-between py-2.5 ${
+                    role === "interviewer" ? "active font-bold" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <BriefcaseIcon className="size-4 text-primary" />
+                    <span>Interviewer Mode</span>
+                  </div>
+                  {role === "interviewer" && <span className="badge badge-primary badge-xs">Active</span>}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => selectRole("candidate")}
+                  className={`flex items-center justify-between py-2.5 ${
+                    role === "candidate" ? "active font-bold" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <CodeIcon className="size-4 text-secondary" />
+                    <span>Candidate Mode</span>
+                  </div>
+                  {role === "candidate" && <span className="badge badge-secondary badge-xs">Active</span>}
+                </button>
+              </li>
+              <div className="divider my-1"></div>
+              <li>
+                <button
+                  onClick={() => setShowRoleModal(true)}
+                  className="text-xs text-base-content/70 hover:text-base-content"
+                >
+                  Role Info & Details...
+                </button>
+              </li>
+            </ul>
+          </div>
+
           {/* PROBLEMS PAGE LINK */}
           <Link
             to={"/problems"}
-            className={`px-4 py-2.5 rounded-lg transition-all duration-200 
-              ${
-                isActive("/problems")
-                  ? "bg-primary text-primary-content"
-                  : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
-              }
-              
-              `}
+            className={`px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 ${
+              isActive("/problems")
+                ? "bg-primary text-primary-content"
+                : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
+            }`}
           >
-            <div className="flex items-center gap-x-2.5">
+            <div className="flex items-center gap-x-2">
               <BookOpenIcon className="size-4" />
               <span className="font-medium hidden sm:inline">Problems</span>
             </div>
           </Link>
 
-          {/* DASHBORD PAGE LINK */}
+          {/* DASHBOARD PAGE LINK */}
           <Link
             to={"/dashboard"}
-            className={`px-4 py-2.5 rounded-lg transition-all duration-200 
-              ${
-                isActive("/dashboard")
-                  ? "bg-primary text-primary-content"
-                  : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
-              }
-              
-              `}
+            className={`px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 ${
+              isActive("/dashboard")
+                ? "bg-primary text-primary-content"
+                : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
+            }`}
           >
-            <div className="flex items-center gap-x-2.5">
+            <div className="flex items-center gap-x-2">
               <LayoutDashboardIcon className="size-4" />
-              <span className="font-medium hidden sm:inline">Dashbord</span>
+              <span className="font-medium hidden sm:inline">Dashboard</span>
             </div>
           </Link>
 
-          <div className="ml-4 mt-2">
+          <div className="ml-2 flex items-center">
             <UserButton />
           </div>
         </div>

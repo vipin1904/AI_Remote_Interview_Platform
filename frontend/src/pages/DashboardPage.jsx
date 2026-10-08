@@ -9,12 +9,16 @@ import StatsCards from "../components/StatsCards";
 import ActiveSessions from "../components/ActiveSessions";
 import RecentSessions from "../components/RecentSessions";
 import CreateSessionModal from "../components/CreateSessionModal";
+import JoinByCodeModal from "../components/JoinByCodeModal";
+import { useRole } from "../context/roleStore";
 
 function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { isInterviewer, isCandidate } = useRole();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [roomConfig, setRoomConfig] = useState({ problem: "", difficulty: "" });
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [roomConfig, setRoomConfig] = useState({ problem: "", difficulty: "", candidateEmail: "" });
 
   const createSessionMutation = useCreateSession();
 
@@ -28,6 +32,7 @@ function DashboardPage() {
       {
         problem: roomConfig.problem,
         difficulty: roomConfig.difficulty.toLowerCase(),
+        candidateEmail: roomConfig.candidateEmail || "",
       },
       {
         onSuccess: (data) => {
@@ -51,7 +56,10 @@ function DashboardPage() {
     <>
       <div className="min-h-screen bg-base-300">
         <Navbar />
-        <WelcomeSection onCreateSession={() => setShowCreateModal(true)} />
+        <WelcomeSection
+          onCreateSession={() => setShowCreateModal(true)}
+          onJoinByCode={() => setShowJoinModal(true)}
+        />
 
         {/* Grid layout */}
         <div className="container mx-auto px-6 pb-16">
@@ -78,6 +86,11 @@ function DashboardPage() {
         setRoomConfig={setRoomConfig}
         onCreateRoom={handleCreateRoom}
         isCreating={createSessionMutation.isPending}
+      />
+
+      <JoinByCodeModal
+        isOpen={showJoinModal}
+        onClose={() => setShowJoinModal(false)}
       />
     </>
   );

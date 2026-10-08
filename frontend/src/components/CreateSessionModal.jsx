@@ -49,17 +49,32 @@ function CreateSessionModal({
             </select>
           </div>
 
+          {/* CANDIDATE EMAIL (OPTIONAL) */}
+          <div className="space-y-2">
+            <label className="label">
+              <span className="label-text font-semibold">Candidate Email or Name (Optional)</span>
+              <span className="label-text-alt text-base-content/50">Used to assign session</span>
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. candidate@example.com or Jane Doe"
+              className="input input-bordered w-full"
+              value={roomConfig.candidateEmail || ""}
+              onChange={(e) => setRoomConfig({ ...roomConfig, candidateEmail: e.target.value })}
+            />
+          </div>
+
           {/* ROOM SUMMARY */}
           {roomConfig.problem && (
-            <div className="alert alert-success">
-              <Code2Icon className="size-5" />
-              <div>
-                <p className="font-semibold">Room Summary:</p>
+            <div className="alert alert-info bg-info/10 border-info/30 text-base-content">
+              <Code2Icon className="size-5 text-info" />
+              <div className="text-sm">
+                <p className="font-semibold text-info">Interview Room Config:</p>
                 <p>
-                  Problem: <span className="font-medium">{roomConfig.problem}</span>
+                  Problem: <span className="font-bold">{roomConfig.problem}</span> ({roomConfig.difficulty})
                 </p>
-                <p>
-                  Max Participants: <span className="font-medium">2 (1-on-1 session)</span>
+                <p className="text-xs opacity-75 mt-1">
+                  A shareable Candidate Invite Link will be generated immediately once the room is created.
                 </p>
               </div>
             </div>

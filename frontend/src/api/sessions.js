@@ -32,4 +32,20 @@ export const sessionApi = {
     const response = await axiosInstance.get(`/chat/token`);
     return response.data;
   },
+  saveEvaluation: async (id, data) => {
+    const response = await axiosInstance.patch(`/sessions/${id}/evaluation`, data);
+    return response.data;
+  },
+  revealHint: async (id, hintIndex) => {
+    const response = await axiosInstance.post(`/sessions/${id}/hint`, { hintIndex });
+    return response.data;
+  },
+  getCurrentUser: async () => {
+    const response = await axiosInstance.get(`/users/me`);
+    return response.data;
+  },
+  updateUserRole: async (role) => {
+    const response = await axiosInstance.patch(`/users/role`, { role });
+    return response.data;
+  },
 };

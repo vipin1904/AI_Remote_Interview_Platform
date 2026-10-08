@@ -3,7 +3,7 @@ import Session from "../models/Session.js";
 
 export async function createSession(req, res) {
   try {
-    const { problem, difficulty } = req.body;
+    const { problem, difficulty, candidateEmail } = req.body;
     const userId = req.user._id;
     const clerkId = req.user.clerkId;
 
@@ -15,7 +15,13 @@ export async function createSession(req, res) {
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
     // create session in db
-    const session = await Session.create({ problem, difficulty, host: userId, callId });
+    const session = await Session.create({
+      problem,
+      difficulty,
+      host: userId,
+      callId,
+      candidateEmail: candidateEmail || "",
+    });
 
     // create stream video call
     await streamClient.video.call("default", callId).getOrCreate({
@@ -162,3 +168,58 @@ export async function endSession(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function updateSessionEvaluation(req, res) {
+  try {
+    const { id } = req.params;
+    const { interviewerNotes, evaluation } = req.body;
+    const userId = req.user._id;
+
+    const session = await Session.findById(id);
+    if (!session) return res.status(404).json({ message: "Session not found" });
+
+    if (session.host.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Only the interviewer can update evaluation notes" });
+    }
+
+    if (interviewerNotes !== undefined) session.interviewerNotes = interviewerNotes;
+    if (evaluation) {
+      if (evaluation.rating !== undefined) session.evaluation.rating = evaluation.rating;
+      if (evaluation.recommendation !== undefined)
+        session.evaluation.recommendation = evaluation.recommendation;
+      if (evaluation.feedback !== undefined) session.evaluation.feedback = evaluation.feedback;
+    }
+
+    await session.save();
+    res.status(200).json({ session, message: "Evaluation saved successfully" });
+  } catch (error) {
+    console.log("Error in updateSessionEvaluation:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function revealSessionHint(req, res) {
+  try {
+    const { id } = req.params;
+    const { hintIndex } = req.body;
+    const userId = req.user._id;
+
+    const session = await Session.findById(id);
+    if (!session) return res.status(404).json({ message: "Session not found" });
+
+    if (session.host.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Only the interviewer can reveal hints" });
+    }
+
+    if (!session.revealedHints.includes(hintIndex)) {
+      session.revealedHints.push(hintIndex);
+      await session.save();
+    }
+
+    res.status(200).json({ session, revealedHints: session.revealedHints });
+  } catch (error) {
+    console.log("Error in revealSessionHint:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+

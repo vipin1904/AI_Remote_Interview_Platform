@@ -31,6 +31,33 @@ const sessionSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    candidateEmail: {
+      type: String,
+      default: "",
+    },
+    interviewerNotes: {
+      type: String,
+      default: "",
+    },
+    evaluation: {
+      rating: {
+        type: Number,
+        default: 0,
+      },
+      recommendation: {
+        type: String,
+        enum: ["", "Strong Hire", "Hire", "Leaning No Hire", "No Hire"],
+        default: "",
+      },
+      feedback: {
+        type: String,
+        default: "",
+      },
+    },
+    revealedHints: {
+      type: [Number],
+      default: [],
+    },
   },
   { timestamps: true }
 );

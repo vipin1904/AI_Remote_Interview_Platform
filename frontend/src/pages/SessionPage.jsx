@@ -7,9 +7,21 @@ import { executeCode } from "../lib/piston";
 import Navbar from "../components/Navbar";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { getDifficultyBadgeClass } from "../lib/utils";
-import { Loader2Icon, LogOutIcon, PhoneOffIcon } from "lucide-react";
+import {
+  Loader2Icon,
+  LogOutIcon,
+  PhoneOffIcon,
+  UserPlusIcon,
+  BriefcaseIcon,
+  GraduationCapIcon,
+  UserCheckIcon,
+  ClockIcon,
+} from "lucide-react";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
+import InterviewerToolsPanel from "../components/InterviewerToolsPanel";
+import CandidateProblemPanel from "../components/CandidateProblemPanel";
+import InviteCandidateModal from "../components/InviteCandidateModal";
 
 import useStreamClient from "../hooks/useStreamClient";
 import { StreamCall, StreamVideo } from "@stream-io/video-react-sdk";
@@ -21,6 +33,7 @@ function SessionPage() {
   const { user } = useUser();
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const { data: sessionData, isLoading: loadingSession, refetch } = useSessionById(id);
 
@@ -104,48 +117,115 @@ function SessionPage() {
           {/* LEFT PANEL - CODE EDITOR & PROBLEM DETAILS */}
           <Panel defaultSize={50} minSize={30}>
             <PanelGroup direction="vertical">
-              {/* PROBLEM DSC PANEL */}
+              {/* PROBLEM / INTERVIEWER TOOL PANEL */}
               <Panel defaultSize={50} minSize={20}>
-                <div className="h-full overflow-y-auto bg-base-200">
-                  {/* HEADER SECTION */}
-                  <div className="p-6 bg-base-100 border-b border-base-300">
-                    <div className="flex items-start justify-between mb-3">
+                <div className="h-full overflow-y-auto bg-base-200 flex flex-col">
+                  {/* HEADER SECTION - ROLE DIFFERENTIATED */}
+                  <div className="p-4 sm:p-5 bg-base-100 border-b border-base-300">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
-                        <h1 className="text-3xl font-bold text-base-content">
-                          {session?.problem || "Loading..."}
-                        </h1>
-                        {problemData?.category && (
-                          <p className="text-base-content/60 mt-1">{problemData.category}</p>
-                        )}
-                        <p className="text-base-content/60 mt-2">
-                          Host: {session?.host?.name || "Loading..."} •{" "}
-                          {session?.participant ? 2 : 1}/2 participants
-                        </p>
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <h1 className="text-xl sm:text-2xl font-black text-base-content">
+                            {session?.problem || "Loading..."}
+                          </h1>
+                          <span
+                            className={`badge badge-sm ${getDifficultyBadgeClass(
+                              session?.difficulty
+                            )}`}
+                          >
+                            {session?.difficulty
+                              ? session.difficulty.slice(0, 1).toUpperCase() + session.difficulty.slice(1)
+                              : "Easy"}
+                          </span>
+                          {/* ROLE BADGE */}
+                          {isHost ? (
+                            <span className="badge badge-primary badge-sm gap-1 font-bold">
+                              <BriefcaseIcon className="size-3" />
+                              Interviewer Mode
+                            </span>
+                          ) : (
+                            <span className="badge badge-secondary badge-sm gap-1 font-bold">
+                              <GraduationCapIcon className="size-3" />
+                              Candidate Mode
+                            </span>
+                          )}
+                        </div>
+
+                        {/* STATUS SUBTITLE */}
+                        <div className="flex items-center gap-3 text-xs text-base-content/70 flex-wrap">
+                          {isHost ? (
+                            <>
+                              <span>Host: <strong className="text-base-content">{session?.host?.name || "You"}</strong></span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                {session?.participant ? (
+                                  <>
+                                    <span className="size-2 bg-success rounded-full"></span>
+                                    <span className="text-success font-medium">
+                                      Candidate: {session.participant.name}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="size-2 bg-warning rounded-full animate-pulse"></span>
+                                    <span className="text-warning font-medium">
+                                      Waiting for candidate to join
+                                    </span>
+                                  </>
+                                )}
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Interviewer: <strong className="text-base-content">{session?.host?.name || "Host"}</strong></span>
+                              <span>•</span>
+                              <span className="text-success flex items-center gap-1 font-medium">
+                                <span className="size-2 bg-success rounded-full"></span>
+                                Connected as Candidate
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`badge badge-lg ${getDifficultyBadgeClass(
-                            session?.difficulty
-                          )}`}
-                        >
-                          {session?.difficulty.slice(0, 1).toUpperCase() +
-                            session?.difficulty.slice(1) || "Easy"}
-                        </span>
+                      {/* HEADER ACTIONS */}
+                      <div className="flex items-center gap-2 self-end sm:self-center">
+                        {isHost && (
+                          <button
+                            onClick={() => setShowInviteModal(true)}
+                            className="btn btn-primary btn-outline btn-sm gap-1.5"
+                            title="Invite candidate with direct link or code"
+                          >
+                            <UserPlusIcon className="size-4" />
+                            <span className="text-xs">Invite Candidate</span>
+                          </button>
+                        )}
+
                         {isHost && session?.status === "active" && (
                           <button
                             onClick={handleEndSession}
                             disabled={endSessionMutation.isPending}
-                            className="btn btn-error btn-sm gap-2"
+                            className="btn btn-error btn-sm gap-1.5"
                           >
                             {endSessionMutation.isPending ? (
-                              <Loader2Icon className="w-4 h-4 animate-spin" />
+                              <Loader2Icon className="size-4 animate-spin" />
                             ) : (
-                              <LogOutIcon className="w-4 h-4" />
+                              <LogOutIcon className="size-4" />
                             )}
-                            End Session
+                            <span className="text-xs">End Session</span>
                           </button>
                         )}
+
+                        {!isHost && (
+                          <button
+                            onClick={() => navigate("/dashboard")}
+                            className="btn btn-ghost btn-sm gap-1.5 border border-base-300"
+                          >
+                            <LogOutIcon className="size-4" />
+                            <span className="text-xs">Leave Session</span>
+                          </button>
+                        )}
+
                         {session?.status === "completed" && (
                           <span className="badge badge-ghost badge-lg">Completed</span>
                         )}
@@ -153,75 +233,19 @@ function SessionPage() {
                     </div>
                   </div>
 
-                  <div className="p-6 space-y-6">
-                    {/* problem desc */}
-                    {problemData?.description && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Description</h2>
-                        <div className="space-y-3 text-base leading-relaxed">
-                          <p className="text-base-content/90">{problemData.description.text}</p>
-                          {problemData.description.notes?.map((note, idx) => (
-                            <p key={idx} className="text-base-content/90">
-                              {note}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* examples section */}
-                    {problemData?.examples && problemData.examples.length > 0 && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Examples</h2>
-
-                        <div className="space-y-4">
-                          {problemData.examples.map((example, idx) => (
-                            <div key={idx}>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="badge badge-sm">{idx + 1}</span>
-                                <p className="font-semibold text-base-content">Example {idx + 1}</p>
-                              </div>
-                              <div className="bg-base-200 rounded-lg p-4 font-mono text-sm space-y-1.5">
-                                <div className="flex gap-2">
-                                  <span className="text-primary font-bold min-w-[70px]">
-                                    Input:
-                                  </span>
-                                  <span>{example.input}</span>
-                                </div>
-                                <div className="flex gap-2">
-                                  <span className="text-secondary font-bold min-w-[70px]">
-                                    Output:
-                                  </span>
-                                  <span>{example.output}</span>
-                                </div>
-                                {example.explanation && (
-                                  <div className="pt-2 border-t border-base-300 mt-2">
-                                    <span className="text-base-content/60 font-sans text-xs">
-                                      <span className="font-semibold">Explanation:</span>{" "}
-                                      {example.explanation}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Constraints */}
-                    {problemData?.constraints && problemData.constraints.length > 0 && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Constraints</h2>
-                        <ul className="space-y-2 text-base-content/90">
-                          {problemData.constraints.map((constraint, idx) => (
-                            <li key={idx} className="flex gap-2">
-                              <span className="text-primary">•</span>
-                              <code className="text-sm">{constraint}</code>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                  {/* DEDICATED VIEW PANELS */}
+                  <div className="flex-1 overflow-hidden">
+                    {isHost ? (
+                      <InterviewerToolsPanel
+                        problemData={problemData}
+                        session={session}
+                        sessionId={id}
+                      />
+                    ) : (
+                      <CandidateProblemPanel
+                        problemData={problemData}
+                        session={session}
+                      />
                     )}
                   </div>
                 </div>
@@ -239,6 +263,11 @@ function SessionPage() {
                       onLanguageChange={handleLanguageChange}
                       onCodeChange={(value) => setCode(value)}
                       onRunCode={handleRunCode}
+                      onResetCode={() => {
+                        if (problemData?.starterCode?.[selectedLanguage]) {
+                          setCode(problemData.starterCode[selectedLanguage]);
+                        }
+                      }}
                     />
                   </Panel>
 
@@ -289,6 +318,13 @@ function SessionPage() {
           </Panel>
         </PanelGroup>
       </div>
+
+      <InviteCandidateModal
+        isOpen={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+        sessionId={id}
+        session={session}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
-import { requireAuth } from "@clerk/express";
+import { requireAuth, clerkClient } from "@clerk/express";
 import User from "../models/User.js";
+import { upsertStreamUser } from "../lib/stream.js";
 
 export const protectRoute = [
   requireAuth(),
@@ -10,7 +11,36 @@ export const protectRoute = [
       if (!clerkId) return res.status(401).json({ message: "Unauthorized - invalid token" });
 
       // find user in db by clerk ID
-      const user = await User.findOne({ clerkId });
+      let user = await User.findOne({ clerkId });
+
+      if (!user) {
+        // Auto-sync user from Clerk if webhook didn't run (e.g. in local development)
+        try {
+          const clerkUser = await clerkClient.users.getUser(clerkId);
+          if (clerkUser) {
+            const email = clerkUser.emailAddresses?.[0]?.emailAddress || "";
+            const name =
+              `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() ||
+              email.split("@")[0] ||
+              "User";
+            const profileImage = clerkUser.imageUrl || "";
+
+            user = await User.findOneAndUpdate(
+              { clerkId },
+              { clerkId, email, name, profileImage },
+              { upsert: true, new: true }
+            );
+
+            await upsertStreamUser({
+              id: clerkId,
+              name: user.name,
+              image: user.profileImage,
+            });
+          }
+        } catch (syncError) {
+          console.error("Error auto-syncing Clerk user to MongoDB:", syncError);
+        }
+      }
 
       if (!user) return res.status(404).json({ message: "User not found" });
 

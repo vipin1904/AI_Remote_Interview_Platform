@@ -63,3 +63,45 @@ export const useEndSession = () => {
 
   return result;
 };
+
+export const useCurrentUser = (enabled = true) => {
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: sessionApi.getCurrentUser,
+    enabled,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+};
+
+export const useUpdateUserRole = () => {
+  return useMutation({
+    mutationKey: ["updateUserRole"],
+    mutationFn: sessionApi.updateUserRole,
+    onSuccess: (data) => {
+      toast.success(`Role switched to ${data.user.role === "interviewer" ? "Interviewer 👔" : "Candidate 🎓"}`);
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to update role");
+    },
+  });
+};
+
+export const useSaveEvaluation = () => {
+  return useMutation({
+    mutationKey: ["saveEvaluation"],
+    mutationFn: ({ id, data }) => sessionApi.saveEvaluation(id, data),
+    onSuccess: () => toast.success("Evaluation saved!"),
+    onError: (error) => toast.error(error.response?.data?.message || "Failed to save evaluation"),
+  });
+};
+
+export const useRevealHint = () => {
+  return useMutation({
+    mutationKey: ["revealHint"],
+    mutationFn: ({ id, hintIndex }) => sessionApi.revealHint(id, hintIndex),
+    onSuccess: () => toast.success("Hint shared with candidate!"),
+    onError: (error) => toast.error(error.response?.data?.message || "Failed to reveal hint"),
+  });
+};
+
