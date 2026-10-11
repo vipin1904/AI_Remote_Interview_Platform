@@ -19,7 +19,7 @@ function App() {
     return (
       <div className="min-h-screen bg-base-300 flex flex-col items-center justify-center gap-3">
         <span className="loading loading-spinner loading-lg text-primary"></span>
-        <p className="text-sm font-medium text-base-content/60">Loading Talent IQ...</p>
+        <p className="text-sm font-medium text-base-content/60">Loading RemoteInterview...</p>
       </div>
     );
   }
