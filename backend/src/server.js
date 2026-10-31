@@ -11,6 +11,11 @@ import { inngest, functions } from "./lib/inngest.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
 import userRoutes from "./routes/userRoute.js";
+import questionRoutes from "./routes/questionRoutes.js";
+import codeRoutes from "./routes/codeRoutes.js";
+import attemptRoutes from "./routes/attemptRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
+import { seedQuestionsIfEmpty } from "./lib/seedQuestions.js";
 
 const app = express();
 
@@ -26,9 +31,13 @@ app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/questions", questionRoutes);
+app.use("/api/code", codeRoutes);
+app.use("/api/attempts", attemptRoutes);
+app.use("/api/reports", reportRoutes);
 
 app.get("/health", (req, res) => {
-  res.status(200).json({ msg: "api is up and running" });
+  res.status(200).json({ status: "ok", msg: "api is up and running" });
 });
 
 // make our app ready for deployment
@@ -43,6 +52,7 @@ if (ENV.NODE_ENV === "production") {
 const startServer = async () => {
   try {
     await connectDB();
+    await seedQuestionsIfEmpty();
     app.listen(ENV.PORT, () => console.log("Server is running on port:", ENV.PORT));
   } catch (error) {
     console.error("💥 Error starting the server", error);
