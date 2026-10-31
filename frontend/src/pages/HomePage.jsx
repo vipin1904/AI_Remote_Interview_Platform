@@ -89,7 +89,10 @@ function HomePage() {
             <div className="flex flex-wrap gap-4 pt-2">
               <SignInButton mode="modal">
                 <button
-                  onClick={() => localStorage.setItem("talent_iq_role", "interviewer")}
+                  onClick={() => {
+                    localStorage.setItem("remote_interview_role", "interviewer");
+                    localStorage.setItem("talent_iq_role", "interviewer");
+                  }}
                   className="btn btn-primary btn-lg shadow-lg hover:shadow-xl gap-2"
                 >
                   <span>Host as Interviewer 👔</span>
@@ -99,7 +102,10 @@ function HomePage() {
 
               <SignInButton mode="modal">
                 <button
-                  onClick={() => localStorage.setItem("talent_iq_role", "candidate")}
+                  onClick={() => {
+                    localStorage.setItem("remote_interview_role", "candidate");
+                    localStorage.setItem("talent_iq_role", "candidate");
+                  }}
                   className="btn btn-secondary btn-lg shadow-lg hover:shadow-xl gap-2"
                 >
                   <span>Join as Candidate 🎓</span>

@@ -10,6 +10,7 @@ import ActiveSessions from "../components/ActiveSessions";
 import RecentSessions from "../components/RecentSessions";
 import CreateSessionModal from "../components/CreateSessionModal";
 import JoinByCodeModal from "../components/JoinByCodeModal";
+import CandidateLeetCodeProfile from "../components/CandidateLeetCodeProfile";
 import { useRole } from "../context/roleStore";
 
 function DashboardPage() {
@@ -61,20 +62,29 @@ function DashboardPage() {
           onJoinByCode={() => setShowJoinModal(true)}
         />
 
-        {/* Grid layout */}
-        <div className="container mx-auto px-6 pb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <StatsCards
-              activeSessionsCount={activeSessions.length}
-              recentSessionsCount={recentSessions.length}
-            />
-            <ActiveSessions
-              sessions={activeSessions}
-              isLoading={loadingActiveSessions}
-              isUserInSession={isUserInSession}
-            />
-          </div>
+        {/* Dynamic layout based on Role */}
+        <div className="container mx-auto px-6 pb-16 space-y-8">
+          {/* Candidate LeetCode-style profile view */}
+          {isCandidate && (
+            <CandidateLeetCodeProfile user={user} />
+          )}
 
+          {/* Interviewer management grid */}
+          {isInterviewer && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <StatsCards
+                activeSessionsCount={activeSessions.length}
+                recentSessionsCount={recentSessions.length}
+              />
+              <ActiveSessions
+                sessions={activeSessions}
+                isLoading={loadingActiveSessions}
+                isUserInSession={isUserInSession}
+              />
+            </div>
+          )}
+
+          {/* Past interview sessions & reports */}
           <RecentSessions sessions={recentSessions} isLoading={loadingRecentSessions} />
         </div>
       </div>

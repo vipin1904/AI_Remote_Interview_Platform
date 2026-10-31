@@ -17,7 +17,7 @@ function RoleSelectionModal() {
             <div>
               <h2 className="text-2xl font-black text-base-content">Choose Your Workspace Mode</h2>
               <p className="text-sm text-base-content/60">
-                Tailor your Talent IQ experience like HackerRank. You can change this anytime.
+                Tailor your RemoteInterview Platform experience like LeetCode. You can change this anytime.
               </p>
             </div>
           </div>

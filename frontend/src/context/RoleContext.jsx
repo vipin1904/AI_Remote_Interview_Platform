@@ -9,7 +9,11 @@ export function RoleProvider({ children }) {
   const updateRoleMutation = useUpdateUserRole();
 
   const [role, setRoleState] = useState(() => {
-    return localStorage.getItem("talent_iq_role") || "candidate";
+    return (
+      localStorage.getItem("remote_interview_role") ||
+      localStorage.getItem("talent_iq_role") ||
+      "candidate"
+    );
   });
 
   const [showRoleModal, setShowRoleModal] = useState(false);
@@ -18,17 +22,22 @@ export function RoleProvider({ children }) {
   useEffect(() => {
     if (userData?.user?.role) {
       setRoleState(userData.user.role);
-      localStorage.setItem("talent_iq_role", userData.user.role);
-    } else if (isSignedIn && isLoaded && !localStorage.getItem("talent_iq_role_chosen")) {
-      // Prompt first-time users to choose role (like HackerRank)
+      localStorage.setItem("remote_interview_role", userData.user.role);
+    } else if (
+      isSignedIn &&
+      isLoaded &&
+      !localStorage.getItem("remote_interview_role_chosen") &&
+      !localStorage.getItem("talent_iq_role_chosen")
+    ) {
+      // Prompt first-time users to choose role (like LeetCode / HackerRank)
       setShowRoleModal(true);
     }
   }, [userData, isSignedIn, isLoaded]);
 
   const selectRole = (newRole) => {
     setRoleState(newRole);
-    localStorage.setItem("talent_iq_role", newRole);
-    localStorage.setItem("talent_iq_role_chosen", "true");
+    localStorage.setItem("remote_interview_role", newRole);
+    localStorage.setItem("remote_interview_role_chosen", "true");
     setShowRoleModal(false);
 
     if (isSignedIn) {

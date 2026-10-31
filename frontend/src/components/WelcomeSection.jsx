@@ -24,7 +24,7 @@ function WelcomeSection({ onCreateSession, onJoinByCode }) {
               <div>
                 <div className="flex items-center gap-2">
                   <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                    {user?.firstName ? `Hello, ${user.firstName}!` : "Welcome to Talent IQ!"}
+                    {user?.firstName ? `Hello, ${user.firstName}!` : "Welcome to RemoteInterview Platform!"}
                   </h1>
                   <button
                     onClick={() => setShowRoleModal(true)}

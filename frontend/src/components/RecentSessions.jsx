@@ -1,8 +1,22 @@
-import { Code2, Clock, Users, Trophy, Loader } from "lucide-react";
+import { useState } from "react";
+import { Code2, Clock, Users, Trophy, Loader, FileText, Download } from "lucide-react";
 import { getDifficultyBadgeClass } from "../lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { useRole } from "../context/roleStore";
+import ReportModal from "./ReportModal";
+import { downloadReportPdf } from "../api/reports";
 
 function RecentSessions({ sessions, isLoading }) {
+  const { isInterviewer } = useRole();
+  const [selectedSession, setSelectedSession] = useState(null);
+
+  const handleDirectDownload = async (sessionId) => {
+    try {
+      await downloadReportPdf(sessionId, `interview_report_${sessionId.slice(-6)}.pdf`);
+    } catch (err) {
+      alert("Could not download report PDF. Try generating the report first by clicking 'View Report'.");
+    }
+  };
   return (
     <div className="card bg-base-100 border-2 border-accent/20 hover:border-accent/30 mt-8">
       <div className="card-body">
@@ -76,11 +90,22 @@ function RecentSessions({ sessions, isLoading }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-base-300">
-                    <span className="text-xs font-semibold opacity-80 uppercase">Completed</span>
-                    <span className="text-xs opacity-40">
-                      {new Date(session.updatedAt).toLocaleDateString()}
-                    </span>
+                  <div className="flex items-center justify-between pt-3 border-t border-base-300 gap-2">
+                    <button
+                      onClick={() => setSelectedSession(session._id)}
+                      className="btn btn-xs btn-outline btn-primary gap-1 flex-1"
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      View Report
+                    </button>
+                    <button
+                      onClick={() => handleDirectDownload(session._id)}
+                      className="btn btn-xs btn-ghost gap-1"
+                      title="Download PDF Report"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      PDF
+                    </button>
                   </div>
                 </div>
               </div>
@@ -96,6 +121,13 @@ function RecentSessions({ sessions, isLoading }) {
           )}
         </div>
       </div>
+
+      <ReportModal
+        isOpen={!!selectedSession}
+        onClose={() => setSelectedSession(null)}
+        sessionId={selectedSession}
+        isInterviewer={isInterviewer}
+      />
     </div>
   );
 }
