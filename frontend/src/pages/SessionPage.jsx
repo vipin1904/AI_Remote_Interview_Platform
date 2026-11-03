@@ -39,6 +39,13 @@ import ReportModal from "../components/ReportModal";
 import useStreamClient from "../hooks/useStreamClient";
 
 function SessionPage() {
+  // Responsive layout handling
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useUser();
@@ -541,7 +548,107 @@ function SessionPage() {
 
       {/* MAIN WORKSPACE - 100% SCREEN VIEWPORT */}
       <main className="flex-1 overflow-hidden relative">
-        <PanelGroup direction="horizontal">
+        {/* Responsive layout: stack panels on mobile, side-by-side on larger screens */}
+{isMobile ? (
+  <div className="flex flex-col h-full">
+    {/* LEFT PANEL */}
+    <div className="h-1/2 overflow-y-auto border-b border-lc border-lc-subtle">
+      <LeetCodeProblemPanel
+        problemData={problemData}
+        session={session}
+        isHost={isHost}
+        sessionId={id}
+        attempts={[]}
+      />
+    </div>
+    {/* RIGHT PANEL */}
+    <div className="flex-1 overflow-hidden">
+      <PanelGroup direction="vertical">
+        <Panel defaultSize={62} minSize={25}>
+          <CodeEditorPanel
+            selectedLanguage={selectedLanguage}
+            code={code}
+            isRunning={isRunning}
+            isSubmitting={isSubmitting}
+            onLanguageChange={handleLanguageChange}
+            onCodeChange={handleCodeChange}
+            onRunCode={handleRunCode}
+            onSubmitCode={handleSubmitCode}
+            onResetCode={() => {
+              if (problemData?.starterCode?.[selectedLanguage]) {
+                handleCodeChange(problemData.starterCode[selectedLanguage]);
+              }
+            }}
+          />
+        </Panel>
+        <PanelResizeHandle className="h-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-row-resize select-none" />
+        <Panel defaultSize={38} minSize={20}>
+          <OutputPanel
+            output={output}
+            customInput={customInput}
+            onCustomInputChange={setCustomInput}
+            isRunning={isRunning || isSubmitting}
+            sampleCases={problemData?.examples?.map((ex, idx) => ({
+              name: `Sample Case ${idx}`,
+              input: ex.input,
+              expected: ex.output,
+            }))}
+          />
+        </Panel>
+      </PanelGroup>
+    </div>
+  </div>
+) : (
+  <PanelGroup direction="horizontal">
+    {/* LEFT PANEL - PROBLEM DETAILS, RUBRIC & TABS */}
+    <Panel defaultSize={42} minSize={25} className="overflow-y-auto">
+      <LeetCodeProblemPanel
+        problemData={problemData}
+        session={session}
+        isHost={isHost}
+        sessionId={id}
+        attempts={[]}
+      />
+    </Panel>
+    <PanelResizeHandle className="w-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-col-resize select-none" />
+    {/* RIGHT PANEL - CODE EDITOR & TESTCASES */}
+    <Panel defaultSize={58} minSize={30}>
+      <PanelGroup direction="vertical">
+        <Panel defaultSize={62} minSize={25}>
+          <CodeEditorPanel
+            selectedLanguage={selectedLanguage}
+            code={code}
+            isRunning={isRunning}
+            isSubmitting={isSubmitting}
+            onLanguageChange={handleLanguageChange}
+            onCodeChange={handleCodeChange}
+            onRunCode={handleRunCode}
+            onSubmitCode={handleSubmitCode}
+            onResetCode={() => {
+              if (problemData?.starterCode?.[selectedLanguage]) {
+                handleCodeChange(problemData.starterCode[selectedLanguage]);
+              }
+            }}
+          />
+        </Panel>
+        <PanelResizeHandle className="h-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-row-resize select-none" />
+        <Panel defaultSize={38} minSize={20}>
+          <OutputPanel
+            output={output}
+            customInput={customInput}
+            onCustomInputChange={setCustomInput}
+            isRunning={isRunning || isSubmitting}
+            sampleCases={problemData?.examples?.map((ex, idx) => ({
+              name: `Sample Case ${idx}`,
+              input: ex.input,
+              expected: ex.output,
+            }))}
+          />
+        </Panel>
+      </PanelGroup>
+    </Panel>
+  </PanelGroup>
+)}
           {/* LEFT PANEL - PROBLEM DETAILS, RUBRIC & TABS */}
           <Panel defaultSize={42} minSize={25}>
             <LeetCodeProblemPanel
