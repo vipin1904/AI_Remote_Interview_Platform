@@ -1,62 +1,14 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: all;
-}
+@plugin "daisyui" { themes: all; }
 
-/* LeetCode + HackerRank Rich Palette Design Tokens */
-:root {
-  --lc-bg-main: #1a1a1a;
-  --lc-bg-panel: #262626;
-  --lc-bg-elevated: #2e2e2e;
-  --lc-bg-editor: #1e1e1e;
-  --lc-border: #383838;
-  --lc-border-subtle: #2d2d2d;
-  
-  --lc-text-primary: #eff1f6;
-  --lc-text-secondary: #9ca3af;
-  --lc-text-muted: #6b7280;
-
-  --lc-brand-orange: #ffa116;
-  --lc-brand-amber: #ffc01e;
-  --lc-easy-green: #00b8a3;
-  --lc-hard-red: #ff375f;
-  
-  --hr-emerald: #00ea64;
-  --hr-emerald-dark: #00b34d;
-}
-
-/* LeetCode Rich Custom Utility Classes */
-.bg-lc-main { background-color: #1a1a1a; }
-.bg-lc-panel { background-color: #262626; }
-.bg-lc-elevated { background-color: #2e2e2e; }
-.bg-lc-editor { background-color: #1e1e1e; }
-.border-lc { border-color: #383838; }
-.border-lc-subtle { border-color: #2d2d2d; }
-
-.text-lc-primary { color: #eff1f6; }
-.text-lc-secondary { color: #9ca3af; }
-.text-lc-orange { color: #ffa116; }
-.text-lc-amber { color: #ffc01e; }
-.text-lc-green { color: #00b8a3; }
-.text-lc-red { color: #ff375f; }
-.text-hr-emerald { color: #00ea64; }
-.bg-hr-emerald { background-color: #00ea64; }
+/* LeetCode-inspired theme */
+@import "./theme/leetcodeTheme.css";
 
 /* Custom Sleek Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
 
 /* Buttons default cursor */
 @layer base {
