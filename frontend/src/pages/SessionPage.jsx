@@ -552,7 +552,7 @@ function SessionPage() {
 {isMobile ? (
   <div className="flex flex-col h-full">
     {/* LEFT PANEL */}
-    <div className="h-1/2 overflow-y-auto border-b border-lc border-lc-subtle">
+    <div className="h-1/2 overflow-hidden border-b border-[#383838]">
       <LeetCodeProblemPanel
         problemData={problemData}
         session={session}
@@ -601,7 +601,7 @@ function SessionPage() {
 ) : (
   <PanelGroup direction="horizontal">
     {/* LEFT PANEL - PROBLEM DETAILS, RUBRIC & TABS */}
-    <Panel defaultSize={42} minSize={25} className="overflow-y-auto">
+    <Panel defaultSize={42} minSize={25} className="h-full overflow-hidden">
       <LeetCodeProblemPanel
         problemData={problemData}
         session={session}
@@ -612,7 +612,7 @@ function SessionPage() {
     </Panel>
     <PanelResizeHandle className="w-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-col-resize select-none" />
     {/* RIGHT PANEL - CODE EDITOR & TESTCASES */}
-    <Panel defaultSize={58} minSize={30}>
+    <Panel defaultSize={58} minSize={30} className="h-full overflow-hidden">
       <PanelGroup direction="vertical">
         <Panel defaultSize={62} minSize={25}>
           <CodeEditorPanel
@@ -649,63 +649,6 @@ function SessionPage() {
     </Panel>
   </PanelGroup>
 )}
-          {/* LEFT PANEL - PROBLEM DETAILS, RUBRIC & TABS */}
-          <Panel defaultSize={42} minSize={25}>
-            <LeetCodeProblemPanel
-              problemData={problemData}
-              session={session}
-              isHost={isHost}
-              sessionId={id}
-              attempts={[]}
-            />
-          </Panel>
-
-          {/* RESIZE HANDLE */}
-          <PanelResizeHandle className="w-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-col-resize select-none" />
-
-          {/* RIGHT PANEL - CODE EDITOR & TESTCASES */}
-          <Panel defaultSize={58} minSize={30}>
-            <PanelGroup direction="vertical">
-              {/* TOP: CODE EDITOR PANEL */}
-              <Panel defaultSize={62} minSize={25}>
-                <CodeEditorPanel
-                  selectedLanguage={selectedLanguage}
-                  code={code}
-                  isRunning={isRunning}
-                  isSubmitting={isSubmitting}
-                  onLanguageChange={handleLanguageChange}
-                  onCodeChange={handleCodeChange}
-                  onRunCode={handleRunCode}
-                  onSubmitCode={handleSubmitCode}
-                  onResetCode={() => {
-                    if (problemData?.starterCode?.[selectedLanguage]) {
-                      handleCodeChange(problemData.starterCode[selectedLanguage]);
-                    }
-                  }}
-                />
-              </Panel>
-
-              {/* RESIZE HANDLE */}
-              <PanelResizeHandle className="h-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-row-resize select-none" />
-
-              {/* BOTTOM: HACKERRANK TESTCASE & RESULT PANEL */}
-              <Panel defaultSize={38} minSize={20}>
-                <OutputPanel
-                  output={output}
-                  customInput={customInput}
-                  onCustomInputChange={setCustomInput}
-                  isRunning={isRunning || isSubmitting}
-                  sampleCases={problemData?.examples?.map((ex, idx) => ({
-                    name: `Sample Case ${idx}`,
-                    input: ex.input,
-                    expected: ex.output,
-                  }))}
-                />
-              </Panel>
-            </PanelGroup>
-          </Panel>
-        </PanelGroup>
-
         {/* FLOATING POPUP VIDEO CALL & CHAT (TOP-RIGHT WITH SIZE CONTROLS) */}
         <FloatingCallAndChat
           isOpen={showFloatingWidget}

@@ -17,6 +17,14 @@ function ProblemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Responsive layout state
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [currentProblemId, setCurrentProblemId] = useState(id || "two-sum");
   const [currentProblem, setCurrentProblem] = useState(PROBLEMS[id || "two-sum"] || PROBLEMS["two-sum"]);
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
@@ -135,69 +143,129 @@ function ProblemPage() {
   };
 
   return (
-    <div className="h-screen bg-base-100 flex flex-col">
+    <div className="h-screen bg-[#1a1a1a] text-[#eff1f6] flex flex-col overflow-hidden select-text font-sans">
       <Navbar />
 
-      <div className="flex-1">
-        <PanelGroup direction="horizontal">
-          {/* LEFT PANEL - PROBLEM DESCRIPTION */}
-          <Panel defaultSize={40} minSize={30}>
-            <ProblemDescription
-              problem={currentProblem}
-              currentProblemId={currentProblemId}
-              onProblemChange={handleProblemChange}
-              allProblems={Object.values(PROBLEMS)}
-              attempts={attempts}
-              onLoadAttemptCode={(attemptCode) => {
-                setCode(attemptCode);
-                toast.success("Loaded previous code into editor!");
-              }}
-            />
-          </Panel>
+      {/* MAIN WORKSPACE - INDEPENDENT SCROLLING PANELS */}
+      <main className="flex-1 overflow-hidden relative">
+        {isMobile ? (
+          /* MOBILE / TABLET VERTICAL STACK */
+          <div className="flex flex-col h-full overflow-hidden">
+            {/* TOP: PROBLEM DESCRIPTION (SCROLLS INDEPENDENTLY) */}
+            <div className="h-1/2 overflow-hidden border-b border-[#383838]">
+              <ProblemDescription
+                problem={currentProblem}
+                currentProblemId={currentProblemId}
+                onProblemChange={handleProblemChange}
+                allProblems={Object.values(PROBLEMS)}
+                attempts={attempts}
+                onLoadAttemptCode={(attemptCode) => {
+                  setCode(attemptCode);
+                  toast.success("Loaded previous code into editor!");
+                }}
+              />
+            </div>
 
-          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+            {/* BOTTOM: EDITOR & TESTCASES (SCROLLS INDEPENDENTLY) */}
+            <div className="flex-1 overflow-hidden">
+              <PanelGroup direction="vertical" className="h-full">
+                <Panel defaultSize={60} minSize={25} className="h-full overflow-hidden">
+                  <CodeEditorPanel
+                    selectedLanguage={selectedLanguage}
+                    code={code}
+                    isRunning={isRunning}
+                    isSubmitting={isSubmitting}
+                    onLanguageChange={handleLanguageChange}
+                    onCodeChange={setCode}
+                    onRunCode={handleRunCode}
+                    onSubmitCode={handleSubmitCode}
+                    onResetCode={() => {
+                      const starter = currentProblem?.starterCode?.[selectedLanguage] || "";
+                      setCode(starter);
+                    }}
+                  />
+                </Panel>
 
-          {/* RIGHT PANEL - CODE EDITOR & OUTPUT */}
-          <Panel defaultSize={60} minSize={30}>
-            <PanelGroup direction="vertical">
-              {/* TOP PANEL - CODE EDITOR */}
-              <Panel defaultSize={65} minSize={30}>
-                <CodeEditorPanel
-                  selectedLanguage={selectedLanguage}
-                  code={code}
-                  isRunning={isRunning}
-                  isSubmitting={isSubmitting}
-                  onLanguageChange={handleLanguageChange}
-                  onCodeChange={setCode}
-                  onRunCode={handleRunCode}
-                  onSubmitCode={handleSubmitCode}
-                  onResetCode={() => {
-                    const starter = currentProblem?.starterCode?.[selectedLanguage] || "";
-                    setCode(starter);
-                  }}
-                />
-              </Panel>
+                <PanelResizeHandle className="h-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-row-resize select-none" />
 
-              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+                <Panel defaultSize={40} minSize={20} className="h-full overflow-hidden">
+                  <OutputPanel
+                    output={output}
+                    customInput={customInput}
+                    onCustomInputChange={setCustomInput}
+                    isRunning={isRunning || isSubmitting}
+                    sampleCases={currentProblem?.examples?.map((ex, idx) => ({
+                      name: `Case ${idx + 1}`,
+                      input: ex.input,
+                      expected: ex.output,
+                    }))}
+                  />
+                </Panel>
+              </PanelGroup>
+            </div>
+          </div>
+        ) : (
+          /* DESKTOP SIDE-BY-SIDE SPLIT */
+          <PanelGroup direction="horizontal" className="h-full">
+            {/* LEFT PANEL - PROBLEM DESCRIPTION (SCROLLS INDEPENDENTLY) */}
+            <Panel defaultSize={42} minSize={25} className="h-full overflow-hidden">
+              <ProblemDescription
+                problem={currentProblem}
+                currentProblemId={currentProblemId}
+                onProblemChange={handleProblemChange}
+                allProblems={Object.values(PROBLEMS)}
+                attempts={attempts}
+                onLoadAttemptCode={(attemptCode) => {
+                  setCode(attemptCode);
+                  toast.success("Loaded previous code into editor!");
+                }}
+              />
+            </Panel>
 
-              {/* BOTTOM PANEL - OUTPUT PANEL */}
-              <Panel defaultSize={35} minSize={25}>
-                <OutputPanel
-                  output={output}
-                  customInput={customInput}
-                  onCustomInputChange={setCustomInput}
-                  isRunning={isRunning || isSubmitting}
-                  sampleCases={currentProblem?.examples?.map((ex, idx) => ({
-                    name: `Case ${idx + 1}`,
-                    input: ex.input,
-                    expected: ex.output,
-                  }))}
-                />
-              </Panel>
-            </PanelGroup>
-          </Panel>
-        </PanelGroup>
-      </div>
+            <PanelResizeHandle className="w-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-col-resize select-none" />
+
+            {/* RIGHT PANEL - CODE EDITOR & OUTPUT (SCROLLS INDEPENDENTLY) */}
+            <Panel defaultSize={58} minSize={30} className="h-full overflow-hidden">
+              <PanelGroup direction="vertical" className="h-full">
+                {/* TOP: CODE EDITOR */}
+                <Panel defaultSize={62} minSize={25} className="h-full overflow-hidden">
+                  <CodeEditorPanel
+                    selectedLanguage={selectedLanguage}
+                    code={code}
+                    isRunning={isRunning}
+                    isSubmitting={isSubmitting}
+                    onLanguageChange={handleLanguageChange}
+                    onCodeChange={setCode}
+                    onRunCode={handleRunCode}
+                    onSubmitCode={handleSubmitCode}
+                    onResetCode={() => {
+                      const starter = currentProblem?.starterCode?.[selectedLanguage] || "";
+                      setCode(starter);
+                    }}
+                  />
+                </Panel>
+
+                <PanelResizeHandle className="h-1.5 bg-[#333333] hover:bg-[#00b8a3] transition-colors cursor-row-resize select-none" />
+
+                {/* BOTTOM: OUTPUT PANEL */}
+                <Panel defaultSize={38} minSize={20} className="h-full overflow-hidden">
+                  <OutputPanel
+                    output={output}
+                    customInput={customInput}
+                    onCustomInputChange={setCustomInput}
+                    isRunning={isRunning || isSubmitting}
+                    sampleCases={currentProblem?.examples?.map((ex, idx) => ({
+                      name: `Case ${idx + 1}`,
+                      input: ex.input,
+                      expected: ex.output,
+                    }))}
+                  />
+                </Panel>
+              </PanelGroup>
+            </Panel>
+          </PanelGroup>
+        )}
+      </main>
     </div>
   );
 }

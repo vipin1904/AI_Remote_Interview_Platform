@@ -161,7 +161,7 @@ export default function LeetCodeProblemPanel({
       </div>
 
       {/* BODY CONTENT */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-6">
+      <div className="flex-1 overflow-y-auto overscroll-contain p-5 space-y-6">
         {/* TAB 1: PROBLEM STATEMENT */}
         {activeTab === "problem" && (
           <>

@@ -130,6 +130,46 @@ export default function FloatingCallAndChat({
     };
   }, [isDragging]);
 
+  const handleTouchStart = (e) => {
+    if (e.target.closest("button") || e.target.closest("input")) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    setIsDragging(true);
+    dragStartRef.current = {
+      mouseX: touch.clientX,
+      mouseY: touch.clientY,
+      posX: position.x,
+      posY: position.y,
+    };
+  };
+
+  useEffect(() => {
+    const handleTouchMove = (e) => {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      if (!touch) return;
+      const dx = touch.clientX - dragStartRef.current.mouseX;
+      const dy = touch.clientY - dragStartRef.current.mouseY;
+      setPosition({
+        x: dragStartRef.current.posX + dx,
+        y: dragStartRef.current.posY + dy,
+      });
+    };
+
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      window.addEventListener("touchmove", handleTouchMove, { passive: true });
+      window.addEventListener("touchend", handleTouchEnd);
+    }
+    return () => {
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [isDragging]);
+
   const decreaseSize = () => {
     if (size === "large") setSize("normal");
     else if (size === "normal") setSize("mini");
@@ -195,11 +235,11 @@ export default function FloatingCallAndChat({
         size === "docked" ? "top-14 right-0" : "top-16 right-4"
       } z-50 ${dimensions.width} ${
         dimensions.height
-      } flex flex-col bg-[#1a1a1a]/95 text-[#eff1f6] backdrop-blur-xl border-2 border-[#383838] rounded-2xl shadow-2xl overflow-hidden transition-all duration-150`}
+      } max-w-[calc(100vw-1.5rem)] max-h-[calc(100vh-5rem)] flex flex-col bg-[#1a1a1a]/95 text-[#eff1f6] backdrop-blur-xl border-2 border-[#383838] rounded-2xl shadow-2xl overflow-hidden transition-all duration-150`}
     >
       {/* HEADER BAR (Draggable) */}
       <div
-        onMouseDown={handleMouseDown}
+        onMouseDown={handleMouseDown} onTouchStart={handleTouchStart}
         className={`px-3 py-2 bg-[#262626] border-b border-[#383838] flex items-center justify-between cursor-move select-none ${
           isDragging ? "opacity-80" : ""
         }`}
