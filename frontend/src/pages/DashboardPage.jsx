@@ -55,7 +55,7 @@ function DashboardPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-base-300">
+      <div className="min-h-screen bg-[#1a1a1a] text-[#eff1f6]">
         <Navbar />
         <WelcomeSection
           onCreateSession={() => setShowCreateModal(true)}
