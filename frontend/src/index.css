@@ -1,14 +1,68 @@
 @import "tailwindcss";
 @plugin "daisyui" { themes: all; }
 
-/* LeetCode-inspired theme */
+/* LeetCode Rich Palette & Design Tokens */
 @import "./theme/leetcodeTheme.css";
 
-/* Custom Sleek Scrollbars */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+/* DaisyUI Theme Mapping & Global Colors to match LeetCode Dark Mode */
+[data-theme="leetcode"],
+[data-theme="dark"],
+:root {
+  color-scheme: dark;
+  --color-base-100: #262626; /* Card / container / navbar background */
+  --color-base-200: #1a1a1a; /* Main body / canvas background */
+  --color-base-300: #2e2e2e; /* Elevated cards / toolbars / tags */
+  --color-base-content: #eff1f6; /* LeetCode word / text color (crisp readable off-white) */
+
+  --color-primary: #ffa116; /* LeetCode signature orange */
+  --color-primary-content: #1a1a1a;
+
+  --color-secondary: #00b8a3; /* LeetCode easy green / teal */
+  --color-secondary-content: #1a1a1a;
+
+  --color-accent: #ffc01e; /* LeetCode amber */
+  --color-accent-content: #1a1a1a;
+
+  --color-neutral: #333333;
+  --color-neutral-content: #eff1f6;
+
+  --color-info: #38bdf8;
+  --color-info-content: #0f172a;
+
+  --color-success: #2db55d; /* LeetCode calendar green / solved check */
+  --color-success-content: #ffffff;
+
+  --color-warning: #ffa116; /* LeetCode orange */
+  --color-warning-content: #1a1a1a;
+
+  --color-error: #ff375f; /* LeetCode hard red */
+  --color-error-content: #ffffff;
+}
+
+body {
+  background-color: #1a1a1a;
+  color: #eff1f6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Custom Sleek LeetCode Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
 
 /* Buttons default cursor */
 @layer base {

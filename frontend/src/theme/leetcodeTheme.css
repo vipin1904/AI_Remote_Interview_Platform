@@ -1,0 +1,53 @@
+/* LeetCode Rich Palette & Design Tokens */
+
+:root {
+  /* LeetCode Dark Mode Primary Backgrounds */
+  --lc-bg-main: #1a1a1a;       /* Main canvas background */
+  --lc-bg-panel: #262626;      /* Card / panel / navbar background */
+  --lc-bg-elevated: #2e2e2e;   /* Elevated cards / active pills */
+  --lc-bg-subtle: #333333;     /* Hover states & borders */
+  --lc-bg-editor: #1e1e1e;     /* Monaco code editor background */
+
+  /* LeetCode Borders */
+  --lc-border: #383838;
+  --lc-border-subtle: #2d2d2d;
+
+  /* LeetCode Word / Text Colors */
+  --lc-text-primary: #eff1f6;   /* Crisp readable white */
+  --lc-text-secondary: #9ca3af; /* Muted gray (tabs, labels) */
+  --lc-text-muted: #737373;     /* Disabled / placeholder */
+
+  /* LeetCode Brand & Status Accents */
+  --lc-brand-orange: #ffa116;   /* LeetCode signature orange */
+  --lc-brand-amber: #ffc01e;    /* LeetCode secondary amber */
+  --lc-easy-green: #00b8a3;     /* LeetCode easy teal / green */
+  --lc-calendar-green: #2db55d; /* LeetCode calendar green (Day circle) */
+  --lc-hard-red: #ff375f;       /* LeetCode hard difficulty red */
+
+  /* HackerRank Emerald Accent */
+  --hr-emerald: #00ea64;
+  --hr-emerald-dark: #00b34d;
+}
+
+/* Background Utility Classes */
+.bg-lc-main { background-color: #1a1a1a; }
+.bg-lc-panel { background-color: #262626; }
+.bg-lc-elevated { background-color: #2e2e2e; }
+.bg-lc-subtle { background-color: #333333; }
+.bg-lc-editor { background-color: #1e1e1e; }
+
+/* Border Utility Classes */
+.border-lc { border-color: #383838; }
+.border-lc-subtle { border-color: #2d2d2d; }
+
+/* Text / Word Color Utility Classes */
+.text-lc-primary { color: #eff1f6; }
+.text-lc-secondary { color: #9ca3af; }
+.text-lc-muted { color: #737373; }
+.text-lc-orange { color: #ffa116; }
+.text-lc-amber { color: #ffc01e; }
+.text-lc-green { color: #00b8a3; }
+.text-lc-cal-green { color: #2db55d; }
+.text-lc-red { color: #ff375f; }
+.text-hr-emerald { color: #00ea64; }
+.bg-hr-emerald { background-color: #00ea64; }
